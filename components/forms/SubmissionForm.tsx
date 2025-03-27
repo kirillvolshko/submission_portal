@@ -9,6 +9,10 @@ import TextareaField from "./fields/TextAreaField";
 import SelectField from "./fields/SelectField";
 import { Button } from "../ui/button";
 import { useGetLevelsQuery } from "@/store/levels/levelsService";
+import { useSendAssignmentMutation } from "@/store/assignments/assignmentService";
+import { useRouter } from "next/navigation";
+import { useDispatch } from "react-redux";
+import { setData } from "@/store/assignments/assignmentSlice";
 
 type FormValues = z.infer<typeof SubmissionSchema>;
 export const SubmissionForm = () => {
@@ -17,7 +21,9 @@ export const SubmissionForm = () => {
     defaultValues: SubmissionValueDefault,
   });
   const { data, error } = useGetLevelsQuery({});
-
+  const dispatch = useDispatch();
+  const [sendData] = useSendAssignmentMutation();
+  const router = useRouter();
   const options =
     data?.levels.map((item) => ({
       label: item,
@@ -26,7 +32,10 @@ export const SubmissionForm = () => {
 
   const handleOnSubmit = async (data: FormValues) => {
     try {
-      console.log(data);
+      await sendData(data).unwrap();
+      dispatch(setData(data));
+      form.reset();
+      router.push("/thank-you");
     } catch (error) {
       console.log(error);
     }
@@ -52,20 +61,20 @@ export const SubmissionForm = () => {
           />
           <TextareaField
             control={form.control}
-            name="description"
+            name="assignment_description"
             label="Description"
             placeholder="Input your assigment description"
             classNameTextarea="w-full"
           />
           <InputField
             control={form.control}
-            name="gitHubLink"
+            name="github_repo_url"
             label="GitHub Link"
             placeholder="Input your GitHub link"
           />
           <SelectField
             control={form.control}
-            name="candidateLevel"
+            name="candidate_level"
             label="Candidate Level"
             placeholder="Select your level"
             options={options}

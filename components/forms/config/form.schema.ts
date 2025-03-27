@@ -15,14 +15,14 @@ export const SubmissionSchema = z.object({
       message: "Email cannot be just spaces.",
     }),
 
-  description: z
+  assignment_description: z
     .string()
     .min(10, "So short")
     .refine((val) => val.trim() !== "", {
       message: "Description cannot be just spaces.",
     }),
 
-  gitHubLink: z
+  github_repo_url: z
     .string()
     .url("This is not a valid link.")
     .refine((link) => link.includes("github.com"), {
@@ -34,13 +34,13 @@ export const SubmissionSchema = z.object({
     .refine((val) => val.trim() !== "", {
       message: "GitHub link cannot be just spaces.",
     }),
-  candidateLevel: z.string().min(1, "Candidate level is required."),
+  candidate_level: z.string().min(1, "Candidate level is required."),
 });
 
 export const SubmissionValueDefault = {
   name: "",
   email: "",
-  description: "",
-  gitHubLink: "",
-  candidateLevel: "",
+  assignment_description: "",
+  github_repo_url: "",
+  candidate_level: "",
 };

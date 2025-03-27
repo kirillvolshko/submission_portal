@@ -2,16 +2,23 @@
 
 import { combineReducers, configureStore, Middleware } from "@reduxjs/toolkit";
 import { levelsService } from "./levels/levelsService";
+import { assignmentService } from "./assignments/assignmentService";
+import assignmentReducer from "./assignments/assignmentSlice";
 
 const rootReducer = combineReducers({
+  assignment: assignmentReducer,
   [levelsService.reducerPath]: levelsService.reducer,
+  [assignmentService.reducerPath]: assignmentService.reducer,
 });
 
 const makeStore = () => {
   return configureStore({
     reducer: rootReducer,
     middleware: (getDefaultMiddleware) =>
-      getDefaultMiddleware().concat(levelsService.middleware as Middleware),
+      getDefaultMiddleware().concat(
+        levelsService.middleware as Middleware,
+        assignmentService.middleware as Middleware
+      ),
   });
 };
 
