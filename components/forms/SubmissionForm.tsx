@@ -13,6 +13,7 @@ import { useSendAssignmentMutation } from "@/store/assignments/assignmentService
 import { useRouter } from "next/navigation";
 import { useDispatch } from "react-redux";
 import { setData } from "@/store/assignments/assignmentSlice";
+import { toast } from "sonner";
 
 type FormValues = z.infer<typeof SubmissionSchema>;
 export const SubmissionForm = () => {
@@ -32,12 +33,15 @@ export const SubmissionForm = () => {
 
   const handleOnSubmit = async (data: FormValues) => {
     try {
+      //throw new Error("Some error"); For tests
       await sendData(data).unwrap();
       dispatch(setData(data));
       form.reset();
       router.push("/thank-you");
-    } catch (error) {
-      console.log(error);
+    } catch (error: unknown) {
+      if (error instanceof Error) {
+        toast.error((error as Error).message);
+      }
     }
   };
   return (
